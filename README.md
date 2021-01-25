@@ -15,7 +15,7 @@ where
   * To initialize from a Unix timestamp, prepend '@' to the timestamp, e.g., `@1611363600`.
   * To initialize from a time string, be sure to include the time zone explicitly, e.g., `2021-01-01 12:00 PST`; otherwise the user's local time zone is assumed (which would defeat the purpose of using this token).
 
-* _format_ is a string giving the desired formatting.
+* _format_ is a string giving the desired output formatting.
   * Formatting options are [documented in the PHP Manual](https://www.php.net/manual/en/datetime.format).
 
 To initialize from a timestamp, you can convert a date to a timestamp using [EpochConverter](https://www.epochconverter.com).
