@@ -7,7 +7,7 @@ A typical usage would be to give the start time of an event in the body of a pag
 
 Tokens are of the form
 
-[time-tokens:datetime:_timestr_|_format_]
+[time-tokens:_timestr_|_format_]
 
 where
 

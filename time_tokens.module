@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Create tokens to render a time in a user time zone.
+ * Create tokens to render a date and/or time in the user's time zone.
  */
 
 /**
@@ -10,12 +10,12 @@
 function time_tokens_token_info() {
   $info['types']['time-tokens'] = array(
     'name' => t('Time tokens'),
-    'description' => t("Tokens that render a time in the user's time zone."),
+    'description' => t("Tokens that render a date and/or time in the user's time zone."),
   );
 
-  $info['tokens']['time-tokens']['datetime'] = array(
-    'name' => t('Date/Time'),
-    'description' => t("Render a time in the user's own time zone."),
+  $info['tokens']['time-tokens']['?|?'] = array(
+    'name' => t('Date/time'),
+    'description' => t("Render a date and/or time in the user's own time zone with a specified format."),
   );
   return $info;
 }
@@ -28,38 +28,23 @@ function time_tokens_tokens($type, $tokens, array $data = array(), array $option
   $replacements = array();
   if ($type == 'time-tokens') {
     foreach ($tokens as $key => $token) {
-      // Note that we use colon (:) and pipe (|) as delimiters, but both the
-      // time string and format string likely contain colons and the format
-      // string could also contain a pipe. So parse carefully.
-      $pos = strpos($key, ':');
-      if ($pos === FALSE) {
+      // Note that we use pipe (|) as second delimiter rather than colon (:)
+      // because both the time string and format string likely contain colons
+      // and the format string could also contain a pipe. So parse carefully.
+      $ppos = strpos($key, '|');
+      if ($ppos === FALSE) {
         $replacements[$token] = t('Token error: %token has an invalid time-tokens format.', array('%token' => $token));
       }
       else {
-        $key_type = substr($key, 0, $pos);
-        $key_rest = substr($key, $pos + 1);
-        switch ($key_type) {
-          case 'datetime':
-            $ppos = strpos($key_rest, '|');
-            if ($ppos === FALSE) {
-              $replacements[$token] = t('Token error: %token has an invalid time-tokens format.', array('%token' => $token));
-            }
-            else {
-              $timestr = trim(substr($key_rest, 0, $ppos));
-              try {
-                $datetime = new DateTime($timestr); // could fail
-                $datetime->setTimeZone(new DateTimeZone(backdrop_get_user_timezone()));
-                $format = filter_xss(substr($key_rest, $ppos + 1));
-                $replacements[$token] = $datetime->format($format);
-              }
-              catch (Exception $e) {
-                $replacements[$token] = t('Token error: unable to parse time %timestr in %token.', array('%timestr' => $timestr, '%token' => $token));
-              }
-            }
-          break;
-
-          default:
-            $replacements[$token] = t('Token error: %token is an unrecognized time-tokens token.', array('%token' => $token));
+        $timestr = trim(substr($key, 0, $ppos));
+        try {
+          $datetime = new DateTime($timestr); // could fail
+          $datetime->setTimeZone(new DateTimeZone(backdrop_get_user_timezone()));
+          $format = filter_xss(substr($key, $ppos + 1));
+          $replacements[$token] = $datetime->format($format);
+        }
+        catch (Exception $e) {
+          $replacements[$token] = t('Token error: unable to parse time %timestr in %token.', array('%timestr' => $timestr, '%token' => $token));
         }
       }
     }
