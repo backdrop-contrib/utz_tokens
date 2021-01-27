@@ -1,13 +1,13 @@
-Time Tokens
+User Time Zone Tokens
 ================
 
-Time Tokens module provides tokens that lets you embed a date or time within formatted text so that it is displayed in the user's time zone. 
+This module provides tokens that lets you embed a date or time within formatted text so that it is displayed in the user's time zone. Anonymous users will see it in the default time zone (typically the server time zone).
 
 A typical usage would be to give the start time of an event in the body of a page that will be seen by people in multiple time zones.
 
 Tokens are of the form
 
-[time-tokens:_timestr_|_format_]
+[utz-datetime:_timestr_|_format_]
 
 where
 
@@ -33,12 +33,12 @@ Installation
 Documentation
 -------------
 
-Additional documentation is located in [the Wiki](https://github.com/backdrop-contrib/time-tokens/wiki/Documentation).
+Additional documentation is located in [the Wiki](https://github.com/backdrop-contrib/utz_tokens/wiki/Documentation).
 
 Issues
 ------
 
-Bugs and feature requests should be reported in [the Issue Queue](https://github.com/backdrop-contrib/time_tokens/issues).
+Bugs and feature requests should be reported in [the Issue Queue](https://github.com/backdrop-contrib/utz_tokens/issues).
 
 Current Maintainers
 -------------------

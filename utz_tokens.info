@@ -1,0 +1,5 @@
+name = User Time Zone Tokens
+description = "Provides tokens that render a date and/or time in the user's time zone."
+dependencies[] = token_filter
+backdrop = 1.x
+type = module
