@@ -4,6 +4,44 @@
  * Create tokens to render a date and/or time in the user's time zone.
  */
 
+
+/**
+ * Implements hook_menu().
+ */
+function utz_tokens_menu() {
+  $items['admin/config/regional/utz-tokens'] = array(
+    'title' => 'User Time Zone Tokens',
+    'page callback' => 'backdrop_get_form',
+    'page arguments' => array('utz_tokens_admin_form'),
+    'access arguments' => array('administer site configuration'),
+    'description' => 'Configure User Time Zone Tokens settings.',
+    'file' => 'utz_tokens.admin.inc',
+  );
+  return $items;
+}
+
+
+/**
+ * Implements hook_init().
+ */
+function utz_tokens_init() {
+  if (config_get('utz_tokens.settings', 'detect_anonymous')) {
+    if (module_exists('timezone_detect') && module_exists('luxon')) {
+      backdrop_add_library('timezone_detect', 'jstz');
+      backdrop_add_library('luxon', 'luxon');
+      backdrop_add_js(backdrop_get_path('module', 'utz_tokens') . '/js/utz_tokens.js', 'file');
+    }
+    else {
+      // Fix config setting if either module is missing. This could happen if
+      // the user disabled one of the required modules after enabling the
+      // setting.
+      config_set('utz_tokens.settings', 'detect_anonymous', 0);
+      backdrop_set_message(t('One or both of Time Zone Detect and Luxon modules is disabled; detection of anonymous user time zone has been turned off in User Time Zone Tokens settings.'), 'warning');
+    }
+  }
+}
+
+
 /**
  * Implements hook_token_info().
  */
@@ -27,8 +65,11 @@ function utz_tokens_token_info() {
 function utz_tokens_tokens($type, $tokens, array $data = array(), array $options = array()) {
   $replacements = array();
   if ($type == 'utz-datetime') {
-    global $user;
-    $anonymous = $user->uid ? 0 : 1;
+    $detect_anonymous = config_get('utz_tokens.settings', 'detect_anonymous');
+    if ($detect_anonymous) {
+      global $user;
+      $anonymous = $user->uid ? 0 : 1;
+    }
     foreach ($tokens as $key => $token) {
       // Note that we use pipe (|) as second delimiter rather than colon (:)
       // because both the time string and format string likely contain colons.
@@ -42,10 +83,12 @@ function utz_tokens_tokens($type, $tokens, array $data = array(), array $options
           $datetime = new DateTime($timestr); // could fail
           $datetime->setTimeZone(new DateTimeZone(backdrop_get_user_timezone()));
           $format = filter_xss(substr($key, $ppos + 1));
-          // Rendered date/time gets wrapped in <span> with a class for CSS
-          // formatting and data attributes to allow future Javascript
-          // processing to detect and deal with anonymous users and cached pages.
-          $replacements[$token] = '<span class="utz-datetime" data-timestamp="' . $datetime->getTimestamp() . '" data-format="' . $format . '" data-anonymous="' . $anonymous . '">' . $datetime->format($format) . '</span>';
+          if ($detect_anonymous) {
+            $replacements[$token] = '<span class="utz-datetime" data-timestamp="' . $datetime->getTimestamp() . '" data-format="' . $format . '" data-anonymous="' . $anonymous . '">' . $datetime->format($format) . '</span>';
+          }
+          else {
+            $replacements[$token] = '<span class="utz-datetime">' . $datetime->format($format) . '</span>';
+          }
         }
         catch (Exception $e) {
           $replacements[$token] = t('Token error: unable to parse time %timestr in %token.', array('%timestr' => $timestr, '%token' => $token));
@@ -54,4 +97,55 @@ function utz_tokens_tokens($type, $tokens, array $data = array(), array $options
     }
   }
   return $replacements;
+}
+
+
+/**
+ * Implements hook_config_info().
+ */
+function utz_tokens_config_info() {
+  $prefixes['utz_tokens.settings'] = array(
+    'label' => t('User Time Zone Tokens settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
+
+/**
+ * Testing block for Javascript. Return a render array of test strings that
+ * compare PHP and JS rendering with the same PHP formatting codes.
+ */
+function _utz_tokens_test_view() {
+  $timestr = '2021-04-04 10:05 PDT';
+
+  $build[] = array('#markup' => _utz_tokens_test($timestr, 'd D j l N S w z')); // days
+  $build[] = array('#markup' => _utz_tokens_test($timestr, 'W')); // weeks
+  $build[] = array('#markup' => _utz_tokens_test($timestr, 'F m M n t')); // months
+  $build[] = array('#markup' => _utz_tokens_test($timestr, 'L o Y y')); // years
+  $build[] = array('#markup' => _utz_tokens_test($timestr, 'a A')); // ampm
+  $build[] = array('#markup' => _utz_tokens_test($timestr, 'B')); // swatch
+  $build[] = array('#markup' => _utz_tokens_test($timestr, 'g H h')); // hours
+  $build[] = array('#markup' => _utz_tokens_test($timestr, 'i s u v')); // minsec
+  $build[] = array('#markup' => _utz_tokens_test($timestr, 'e I O P p T Z')); // timezone
+  $build[] = array('#markup' => _utz_tokens_test($timestr, 'c')); // iso8601
+  $build[] = array('#markup' => _utz_tokens_test($timestr, 'r')); // rfc2822
+  $build[] = array('#markup' => _utz_tokens_test($timestr, 'U')); // timestamp
+
+  return $build;
+}
+
+
+/**
+ * Testing function for Javascript. Return a string to compare PHP and JS for a
+ * given time and format string.
+ */
+function _utz_tokens_test($timestr, $format) {
+  global $user;
+  $anonymous = $user->uid ? 0 : 1;
+  $datetime = new DateTime($timestr);
+  $datetime->setTimeZone(new DateTimeZone(backdrop_get_user_timezone()));
+  $phpstr = $datetime->format($format);
+  $jsstr = '<span class="utz-datetime" data-timestamp="' . $datetime->getTimestamp() . '" data-format="' . $format . '" data-anonymous="' . $anonymous . '">' . 'PLACEHOLDER' . '</span>';
+  return '<p>time: \'' . $timestr . '\' format: \'' . $format . '\'<br>' . $phpstr . '<br>' . $jsstr . '</p>';
 }

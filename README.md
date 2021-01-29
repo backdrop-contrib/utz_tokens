@@ -22,13 +22,21 @@ To initialize from a timestamp, you can convert a date to a timestamp using [Epo
 
 Note that _timestr_ and _format_ are separated by a pipe (|), not a colon (:), because _timestr_ might contain a colon (typically separating hours and minutes).
 
+There is an option to automatically detect the user's time zone and use that for anonymous users (which works even for cached pages). To use this capability you will need to install two additional modules:
+
+* [Time Zone Detect](https://backdropcms.org/project/timezone_detect)
+* [Luxon](https://github.com/bugfolder/luxon)
+
+With these enabled, on the configuration page for this module you will have the option to detect the user's time zone for anonymous users. Time Zone Detect also offers the option to override the user's time zone setting for authenticated users (but use that carefully).
+
 
 Installation
 ------------
 
 - Install this module using [the official Backdrop CMS instructions](https://backdropcms.org/guide/modules).
-
 - Enable the "Replace tokens" filter for the text formats that you will be using these tokens in.
+
+To automatically detect the user's time zone for anonymous users, go to /admin/config/regional/utz-datetime and check that option.
 
 Documentation
 -------------
