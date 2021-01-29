@@ -66,10 +66,6 @@ function utz_tokens_tokens($type, $tokens, array $data = array(), array $options
   $replacements = array();
   if ($type == 'utz-datetime') {
     $detect_anonymous = config_get('utz_tokens.settings', 'detect_anonymous');
-    if ($detect_anonymous) {
-      global $user;
-      $anonymous = $user->uid ? 0 : 1;
-    }
     foreach ($tokens as $key => $token) {
       // Note that we use pipe (|) as second delimiter rather than colon (:)
       // because both the time string and format string likely contain colons.
@@ -84,7 +80,7 @@ function utz_tokens_tokens($type, $tokens, array $data = array(), array $options
           $datetime->setTimeZone(new DateTimeZone(backdrop_get_user_timezone()));
           $format = filter_xss(substr($key, $ppos + 1));
           if ($detect_anonymous) {
-            $replacements[$token] = '<span class="utz-datetime" data-timestamp="' . $datetime->getTimestamp() . '" data-format="' . $format . '" data-anonymous="' . $anonymous . '">' . $datetime->format($format) . '</span>';
+            $replacements[$token] = '<span class="utz-datetime" data-timestamp="' . $datetime->getTimestamp() . '" data-format="' . $format . '" data-anonymous="' . user_is_anonymous() . '">' . $datetime->format($format) . '</span>';
           }
           else {
             $replacements[$token] = '<span class="utz-datetime">' . $datetime->format($format) . '</span>';
@@ -141,11 +137,9 @@ function _utz_tokens_test_view() {
  * given time and format string.
  */
 function _utz_tokens_test($timestr, $format) {
-  global $user;
-  $anonymous = $user->uid ? 0 : 1;
   $datetime = new DateTime($timestr);
   $datetime->setTimeZone(new DateTimeZone(backdrop_get_user_timezone()));
   $phpstr = $datetime->format($format);
-  $jsstr = '<span class="utz-datetime" data-timestamp="' . $datetime->getTimestamp() . '" data-format="' . $format . '" data-anonymous="' . $anonymous . '">' . 'PLACEHOLDER' . '</span>';
+  $jsstr = '<span class="utz-datetime" data-timestamp="' . $datetime->getTimestamp() . '" data-format="' . $format . '" data-anonymous="' . user_is_anonymous() . '">' . 'PLACEHOLDER' . '</span>';
   return '<p>time: \'' . $timestr . '\' format: \'' . $format . '\'<br>' . $phpstr . '<br>' . $jsstr . '</p>';
 }
