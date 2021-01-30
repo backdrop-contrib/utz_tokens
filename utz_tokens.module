@@ -43,6 +43,23 @@ function utz_tokens_init() {
 
 
 /**
+ * Implements hook_theme().
+ */
+function utz_tokens_theme($existing, $type, $theme, $path) {
+  $themes = array(
+    'utz_datetime' => array(
+      'variables' => array(
+        'timestr' => NULL,
+        'format' => NULL,
+      ),
+      'file' => 'utz_tokens.theme.inc',
+    ),
+  );
+  return $themes;
+}
+
+
+/**
  * Implements hook_token_info().
  */
 function utz_tokens_token_info() {
@@ -74,21 +91,10 @@ function utz_tokens_tokens($type, $tokens, array $data = array(), array $options
         $replacements[$token] = t('Token error: %token has an invalid time-tokens format.', array('%token' => $token));
       }
       else {
-        $timestr = trim(substr($key, 0, $ppos));
-        try {
-          $datetime = new DateTime($timestr); // could fail
-          $datetime->setTimeZone(new DateTimeZone(backdrop_get_user_timezone()));
-          $format = filter_xss(substr($key, $ppos + 1));
-          if ($detect_anonymous) {
-            $replacements[$token] = '<span class="utz-datetime" data-timestamp="' . $datetime->getTimestamp() . '" data-format="' . $format . '" data-anonymous="' . user_is_anonymous() . '">' . $datetime->format($format) . '</span>';
-          }
-          else {
-            $replacements[$token] = '<span class="utz-datetime">' . $datetime->format($format) . '</span>';
-          }
-        }
-        catch (Exception $e) {
-          $replacements[$token] = t('Token error: unable to parse time %timestr in %token.', array('%timestr' => $timestr, '%token' => $token));
-        }
+        $replacements[$token] = theme('utz_datetime', array(
+          'timestr' => trim(substr($key, 0, $ppos)),
+          'format' => substr($key, $ppos + 1),
+        ));
       }
     }
   }
