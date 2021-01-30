@@ -49,7 +49,7 @@ function utz_tokens_theme($existing, $type, $theme, $path) {
   $themes = array(
     'utz_datetime' => array(
       'variables' => array(
-        'timestr' => NULL,
+        'datetime' => NULL,
         'format' => NULL,
       ),
       'file' => 'utz_tokens.theme.inc',
@@ -82,17 +82,16 @@ function utz_tokens_token_info() {
 function utz_tokens_tokens($type, $tokens, array $data = array(), array $options = array()) {
   $replacements = array();
   if ($type == 'utz-datetime') {
-    $detect_anonymous = config_get('utz_tokens.settings', 'detect_anonymous');
     foreach ($tokens as $key => $token) {
       // Note that we use pipe (|) as second delimiter rather than colon (:)
       // because both the time string and format string likely contain colons.
       $ppos = strpos($key, '|');
       if ($ppos === FALSE) {
-        $replacements[$token] = t('Token error: %token has an invalid time-tokens format.', array('%token' => $token));
+        $replacements[$token] = t('Token error: %token has an invalid format.', array('%token' => $token));
       }
       else {
         $replacements[$token] = theme('utz_datetime', array(
-          'timestr' => trim(substr($key, 0, $ppos)),
+          'datetime' => trim(substr($key, 0, $ppos)),
           'format' => substr($key, $ppos + 1),
         ));
       }
@@ -119,20 +118,20 @@ function utz_tokens_config_info() {
  * compare PHP and JS rendering with the same PHP formatting codes.
  */
 function _utz_tokens_test_view() {
-  $timestr = '2021-04-04 10:05 PDT';
+  $datetime = '2021-04-04 10:05 PDT';
 
-  $build[] = array('#markup' => _utz_tokens_test($timestr, 'd D j l N S w z')); // days
-  $build[] = array('#markup' => _utz_tokens_test($timestr, 'W')); // weeks
-  $build[] = array('#markup' => _utz_tokens_test($timestr, 'F m M n t')); // months
-  $build[] = array('#markup' => _utz_tokens_test($timestr, 'L o Y y')); // years
-  $build[] = array('#markup' => _utz_tokens_test($timestr, 'a A')); // ampm
-  $build[] = array('#markup' => _utz_tokens_test($timestr, 'B')); // swatch
-  $build[] = array('#markup' => _utz_tokens_test($timestr, 'g H h')); // hours
-  $build[] = array('#markup' => _utz_tokens_test($timestr, 'i s u v')); // minsec
-  $build[] = array('#markup' => _utz_tokens_test($timestr, 'e I O P p T Z')); // timezone
-  $build[] = array('#markup' => _utz_tokens_test($timestr, 'c')); // iso8601
-  $build[] = array('#markup' => _utz_tokens_test($timestr, 'r')); // rfc2822
-  $build[] = array('#markup' => _utz_tokens_test($timestr, 'U')); // timestamp
+  $build[] = array('#markup' => _utz_tokens_test($datetime, 'd D j l N S w z')); // days
+  $build[] = array('#markup' => _utz_tokens_test($datetime, 'W')); // weeks
+  $build[] = array('#markup' => _utz_tokens_test($datetime, 'F m M n t')); // months
+  $build[] = array('#markup' => _utz_tokens_test($datetime, 'L o Y y')); // years
+  $build[] = array('#markup' => _utz_tokens_test($datetime, 'a A')); // ampm
+  $build[] = array('#markup' => _utz_tokens_test($datetime, 'B')); // swatch
+  $build[] = array('#markup' => _utz_tokens_test($datetime, 'g H h')); // hours
+  $build[] = array('#markup' => _utz_tokens_test($datetime, 'i s u v')); // minsec
+  $build[] = array('#markup' => _utz_tokens_test($datetime, 'e I O P p T Z')); // timezone
+  $build[] = array('#markup' => _utz_tokens_test($datetime, 'c')); // iso8601
+  $build[] = array('#markup' => _utz_tokens_test($datetime, 'r')); // rfc2822
+  $build[] = array('#markup' => _utz_tokens_test($datetime, 'U')); // timestamp
 
   return $build;
 }
@@ -142,10 +141,10 @@ function _utz_tokens_test_view() {
  * Testing function for Javascript. Return a string to compare PHP and JS for a
  * given time and format string.
  */
-function _utz_tokens_test($timestr, $format) {
-  $datetime = new DateTime($timestr);
-  $datetime->setTimeZone(new DateTimeZone(backdrop_get_user_timezone()));
-  $phpstr = $datetime->format($format);
-  $jsstr = '<span class="utz-datetime" data-timestamp="' . $datetime->getTimestamp() . '" data-format="' . $format . '" data-anonymous="' . user_is_anonymous() . '">' . 'PLACEHOLDER' . '</span>';
-  return '<p>time: \'' . $timestr . '\' format: \'' . $format . '\'<br>' . $phpstr . '<br>' . $jsstr . '</p>';
+function _utz_tokens_test($datetime, $format) {
+  $datetime_obj = new DateTime($datetime);
+  $datetime_obj->setTimeZone(new DateTimeZone(backdrop_get_user_timezone()));
+  $phpstr = $datetime_obj->format($format);
+  $jsstr = '<span class="utz-datetime" data-timestamp="' . $datetime_obj->getTimestamp() . '" data-format="' . $format . '" data-anonymous="' . user_is_anonymous() . '">' . 'PLACEHOLDER' . '</span>';
+  return '<p>time: \'' . $datetime . '\' format: \'' . $format . '\'<br>' . $phpstr . '<br>' . $jsstr . '</p>';
 }

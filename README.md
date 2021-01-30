@@ -9,11 +9,11 @@ A typical usage would be to give the start time of an event in the body of a pag
 
 Tokens are of the form
 
-[utz-datetime:_timestr_|_format_]
+[utz-datetime:_datetime_|_format_]
 
 where
 
-* _timestr_ is a string specifying the time in any format suitable for initializing a [DateTime object](https://www.php.net/manual/en/class.datetime).
+* _datetime_ is a string specifying the time in any format suitable for initializing a [DateTime object](https://www.php.net/manual/en/class.datetime).
   * To initialize from a Unix timestamp, prepend '@' to the timestamp, e.g., `@1611363600`.
   * To initialize from a time string, be sure to include the time zone explicitly, e.g., `2021-01-01 12:00 PST`; otherwise the user's local time zone is assumed (which would defeat the purpose of using this token).
 
@@ -22,7 +22,7 @@ where
 
 To initialize from a timestamp, you can convert a date to a timestamp using [EpochConverter](https://www.epochconverter.com).
 
-Note that _timestr_ and _format_ are separated by a pipe (|), not a colon (:), because _timestr_ might contain a colon (typically separating hours and minutes).
+Note that _datetime_ and _format_ are separated by a pipe (|), not a colon (:), because _datetime_ might contain a colon (typically separating hours and minutes).
 
 There is an option to automatically detect the user's time zone and use that for anonymous users (which works even for cached pages). To use this capability you will need to install two additional modules:
 
