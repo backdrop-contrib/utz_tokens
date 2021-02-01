@@ -1,7 +1,7 @@
 User Time Zone Tokens
 ================
 
-This module provides tokens that lets you embed a date or time within formatted text so that it is displayed in the user's time zone. 
+This module provides tokens that lets you embed a date or time within formatted text so that it is displayed in the user's time zone.
 
 Anonymous users will see it in the default time zone (typically the server time zone), but there is an option to detect their time zone as well (see below).
 
