@@ -64,13 +64,13 @@ function utz_tokens_theme($existing, $type, $theme, $path) {
  */
 function utz_tokens_token_info() {
   $info['types']['utz-datetime'] = array(
-    'name' => t('Time tokens'),
-    'description' => t("Tokens that render a date and/or time in the user's time zone."),
+    'name' => t('Date specified'),
+    'description' => t("Tokens that render a specified date and/or time in the user's time zone."),
   );
 
   $info['tokens']['utz-datetime']['?|?'] = array(
     'name' => t('Date/time'),
-    'description' => t("Render a date and/or time with a specified format in the user's own time zone."),
+    'description' => t("Render a specified date and/or time with a specified format in the user's time zone."),
   );
   return $info;
 }

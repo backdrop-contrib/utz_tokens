@@ -53,7 +53,7 @@ Bugs and feature requests should be reported in [the Issue Queue](https://github
 Current Maintainers
 -------------------
 
-- [Robert J. Lang](https://github.com/bugfolder).
+- [Robert J. Lang](https://github.com/bugfolder)
 
 Credits
 -------
