@@ -38,7 +38,7 @@ Installation
 - Install this module using [the official Backdrop CMS instructions](https://backdropcms.org/guide/modules).
 - Enable the "Replace tokens" filter for the text formats that you will be using these tokens in.
 
-To automatically detect the user's time zone for anonymous users, go to /admin/config/regional/utz-datetime and check that option.
+To automatically detect the user's time zone for anonymous users, go to /admin/config/regional/utz-tokens and check that option.
 
 Documentation
 -------------
