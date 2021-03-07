@@ -24,6 +24,8 @@ To initialize from a timestamp, you can convert a date to a timestamp using [Epo
 
 Note that _datetime_ and _format_ are separated by a pipe (|), not a colon (:), because _datetime_ might contain a colon (typically separating hours and minutes).
 
+You can use these tokens anywhere that tokens are accepted. To use the tokens in formatted text (the most common use case), install and enable the [Token Filter](https://backdropcms.org/project/token_filter) module.
+
 There is an option to automatically detect the user's time zone and use that for anonymous users (which works even for cached pages). To use this capability you will need to install two additional modules:
 
 * [Time Zone Detect](https://backdropcms.org/project/timezone_detect)
@@ -35,10 +37,17 @@ With these enabled, on the configuration page for this module you will have the 
 Installation
 ------------
 
-- Install this module using [the official Backdrop CMS instructions](https://backdropcms.org/guide/modules).
+Install this module using [the official Backdrop CMS instructions](https://backdropcms.org/guide/modules).
+
+To use the tokens in formatted text, 
+
+- Install and enable the [Token Filter](https://backdropcms.org/project/token_filter) module.
 - Enable the "Replace tokens" filter for the text formats that you will be using these tokens in.
 
-To automatically detect the user's time zone for anonymous users, go to /admin/config/regional/utz-tokens and check that option.
+To automatically detect the time zone for anonymous users, 
+
+- Install and enable the [Time Zone Detect](https://backdropcms.org/project/timezone_detect) module and the [Luxon](https://github.com/bugfolder/luxon) module.
+- Go to /admin/config/regional/utz-tokens and check that option.
 
 Documentation
 -------------
