@@ -10,7 +10,7 @@
  */
 function utz_tokens_menu() {
   $items['admin/config/regional/utz-tokens'] = array(
-    'title' => 'User Time Zone Tokens',
+    'title' => 'User time zone tokens',
     'page callback' => 'backdrop_get_form',
     'page arguments' => array('utz_tokens_admin_form'),
     'access arguments' => array('administer site configuration'),
