@@ -1,45 +1,40 @@
 <?php
-
 /**
  * @file
  * Administration pages for User Time Zone Tokens module.
  */
 
 /**
- * Administration form.
+ * Returns the configuration form.
  */
 function utz_tokens_admin_form($form, &$form_state) {
   $config = config('utz_tokens.settings');
   $form['#config'] = 'utz_tokens.settings';
 
-  $enabled_modules = $disabled_modules = array();
-  if (module_exists('timezone_detect')) {
-    $enabled_modules[] = 'Time Zone Detect';
-    $msgs[] = t('Time Zone Detect module is enabled.');
+  $luxon_enabled = module_exists('luxon');
+  if ($luxon_enabled) {
+    $msg = t('Luxon module is enabled. You can choose the detection method.');
   }
   else {
-    $disabled_modules[] = 'Time Zone Detect';
-    $msgs[] = t('Time Zone Detect module is not enabled.');
-  }
-  if (module_exists('luxon')) {
-    $enabled_modules[] = 'Luxon';
-    $msgs[] = t('Luxon module is enabled.');
-  }
-  else {
-    $disabled_modules[] = 'Luxon';
-    $msgs[] = t('Luxon module is not enabled.');
+    $msg = t('Luxon module is not enabled. Using the default detection method.');
   }
   $form[] = array(
-    '#markup' => implode(' ', $msgs),
+    '#markup' => $msg,
     '#prefix' => '<p>',
     '#suffix' => '</p>',
   );
 
-  $form['detect_anonymous'] = array(
-    '#type' => 'checkbox',
-    '#title' => t("Detect user timezone for anonymous users"),
-    '#default_value' => $config->get('detect_anonymous'),
-    '#disabled' => count($enabled_modules) != 2,
+  $options = array(
+    UTZ_TOKENS_USER_SERVER => t("Use user's timezone for authenticated users, server timezone for anonymous users."),
+    UTZ_TOKENS_USER_BROWSER => t("Use user's timezone for authenticated users, browser's timezone for anonymous users (requires Luxon and Javascript)."),
+    UTZ_TOKENS_BROWSER_BROWSER => t("Use the browser's timezone for both authenticated and anonymous users (requires Luxon and Javascript)."),
+  );
+  $form['timezone_detection'] = array(
+    '#type' => 'radios',
+    '#title' => t("Timezone Detection"),
+    '#options' => $options,
+    '#default_value' => $config->get('timezone_detection'),
+    '#disabled' => !$luxon_enabled,
   );
 
   return system_settings_form($form);

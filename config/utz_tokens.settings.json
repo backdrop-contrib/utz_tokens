@@ -1,4 +1,4 @@
 {
     "_config_name": "utz_tokens.settings",
-    "detect_anonymous": 0
+    "timezone_detection": 0
 }

@@ -17,8 +17,9 @@ where
   * To initialize from a Unix timestamp, prepend '@' to the timestamp, e.g., `@1611363600`.
   * To initialize from a time string, be sure to include the time zone explicitly, e.g., `2021-01-01 12:00 PST`; otherwise the user's local time zone is assumed (which would defeat the purpose of using this token).
 
-* _format_ is a string giving the desired output formatting.
-  * Formatting options are [documented in the PHP Manual](https://www.php.net/manual/en/datetime.format).
+* _format_ is a string giving the desired output formatting, which can be either
+  * The machine name of a Backdrop date/time format found at /admin/config/regional/date-time (e.g., `'short'`, `'medium'`, `'long'`), or
+  * Any valid PHP formatting string. Formatting options are documented [in the PHP Manual](https://www.php.net/manual/en/datetime.format).
 
 To initialize from a timestamp, you can convert a date to a timestamp using [EpochConverter](https://www.epochconverter.com).
 
@@ -26,13 +27,7 @@ Note that _datetime_ and _format_ are separated by a pipe (|), not a colon (:), 
 
 You can use these tokens anywhere that tokens are accepted. To use the tokens in formatted text (the most common use case), install and enable the [Token Filter](https://backdropcms.org/project/token_filter) module.
 
-There is an option to automatically detect the user's time zone and use that for anonymous users (which works even for cached pages). To use this capability you will need to install two additional modules:
-
-* [Time Zone Detect](https://backdropcms.org/project/timezone_detect)
-* [Luxon](https://github.com/bugfolder/luxon)
-
-With these enabled, on the configuration page for this module you will have the option to detect the user's time zone for anonymous users. Time Zone Detect also offers the option to override the user's time zone setting for authenticated users (but use that carefully).
-
+There is an option to automatically detect the user's time zone (which is provided by their browser) and use that for anonymous or all users, which works even for cached pages. To use this capability you will need to install the [Luxon](https://github.com/bugfolder/luxon) module. With Luxon installed and enabled, on the configuration page for this module you will have the option to detect the user's time zone for anonymous or all users. This capability requires Javascript.
 
 Installation
 ------------
@@ -44,10 +39,10 @@ To use the tokens in formatted text,
 - Install and enable the [Token Filter](https://backdropcms.org/project/token_filter) module.
 - Enable the "Replace tokens" filter for the text formats that you will be using these tokens in.
 
-To automatically detect the time zone for anonymous users, 
+To automatically detect the time zone for anonymous or all users, 
 
-- Install and enable the [Time Zone Detect](https://backdropcms.org/project/timezone_detect) module and the [Luxon](https://github.com/bugfolder/luxon) module.
-- Go to /admin/config/regional/utz-tokens and check that option.
+- Install and enable the [Luxon](https://github.com/bugfolder/luxon) module.
+- Go to /admin/config/regional/utz-tokens and check the desired option.
 
 Documentation
 -------------
@@ -58,6 +53,11 @@ Issues
 ------
 
 Bugs and feature requests should be reported in [the Issue Queue](https://github.com/backdrop-contrib/utz_tokens/issues).
+
+Similar Modules
+---------------
+
+User Time Zone Tokens handles time-zone-aware dates and times embedded within content as token text. If you're interested in applying time zone awareness to fields provided by the core Date module, have a look at the [Client Side Date Field Formatter](https://github.com/backdrop-contrib/cs_date_formatter) module.
 
 Current Maintainers
 -------------------

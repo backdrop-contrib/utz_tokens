@@ -234,18 +234,20 @@ jQuery(document).ready(function () {
     return string;
   };
 
-
-  // Determine timezone from browser client using jsTimezoneDetect library.
-  var tz = jstz.determine();
-  var name = tz.name();
-
-  // Find any utz-datetime items on anonymous pages, set them to the proper
-  // timezone, then format the string using the PHP format converter.
-  jQuery('span.utz-datetime[data-anonymous="1"]').each(function() {
-    var timestamp = +($(this).attr('data-timestamp'));
-    var format = $(this).attr('data-format');
-    var date = luxon.DateTime.fromSeconds(timestamp).setZone(name);
-    var dateStr = formatPHP(date, format);
-    $(this).text(dateStr);
-  });
+  // If using browser timezone detection, find any utz-datetime items, then
+  // format the string using the PHP format converter.
+  var detection = Backdrop.settings.utz_tokens.timezone_detection;
+  if (detection == 1 || detection == 2) {
+    var selector = 'span.utz-datetime';
+    if (detection == 1) {
+      selector += '[data-anonymous="1"]';
+    }
+    jQuery(selector).each(function() {
+      var timestamp = +($(this).attr('data-timestamp'));
+      var format = $(this).attr('data-format');
+      var date = luxon.DateTime.fromSeconds(timestamp);
+      var dateStr = formatPHP(date, format);
+      $(this).text(dateStr);
+    });
+  }
 });
