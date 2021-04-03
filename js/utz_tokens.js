@@ -250,6 +250,7 @@
         var date = luxon.DateTime.fromSeconds(timestamp);
         var dateStr = formatPHP(date, format);
         $(this).text(dateStr);
+        $(this).attr('utz-datetime-processed', '1');
       });
     }
   });
