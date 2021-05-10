@@ -443,7 +443,7 @@ function utz_tokens_field_formatter_view($entity_type, $entity, $field, $instanc
           $datetime_obj = new DateTime($item['value'] . 'UTC');
           $datetime = $datetime_obj->getTimestamp();
           if ($is_range) {
-            $datetime_obj = new DateTime($item['value2']);
+            $datetime_obj = new DateTime($item['value2'] . 'UTC');
             $datetime2 = $datetime_obj->getTimestamp();
           }
           break;
@@ -461,10 +461,14 @@ function utz_tokens_field_formatter_view($entity_type, $entity, $field, $instanc
       if ($is_range) {
         switch($settings['fromto']) {
           case 'both':
-              $output1 = theme('utz_datetime', array(
-                'datetime' => '@' . $datetime,
-                'format' => $format,
-              ));
+            $output1 = theme('utz_datetime', array(
+              'datetime' => '@' . $datetime,
+              'format' => $format,
+            ));
+            if ($datetime2 == $datetime) {
+              $output = $output1;
+            }
+            else {
               if ($datetime2 - $datetime < 86400) {
                 $output2 = theme('utz_datetime', array(
                   'datetime' => '@' . $datetime2,
@@ -478,6 +482,7 @@ function utz_tokens_field_formatter_view($entity_type, $entity, $field, $instanc
                 ));
               }
               $output = t('!output1 to !output2', array('!output1' => $output1, '!output2' => $output2));
+            }
             break;
 
           case 'value':
