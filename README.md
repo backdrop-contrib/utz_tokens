@@ -60,7 +60,7 @@ To initialize from a timestamp, you can convert a date to a timestamp using [Epo
 
 Note that _datetime_ and _format_ are separated by a pipe (|), not a colon (:), because _datetime_ might contain a colon (typically separating hours and minutes).
 
-You can use these tokens anywhere that tokens are accepted. To use the tokens in formatted text (the most common use case), install and enable the [Token Filter](https://backdropcms.org/project/token_filter) module.
+You can use these tokens anywhere that tokens are accepted. To use the tokens in formatted text (the most common use case), install and enable the [Token Filter](https://backdropcms.org/project/token_filter) module and then enable the "Replace tokens" filter in your text format.
 
 ### Timezone Detection for Anonymous Users
 
